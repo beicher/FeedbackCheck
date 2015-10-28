@@ -4,6 +4,8 @@ import csv
 # peerfeedback occasionally does the date format differently
 # (not sure so far why)
 from dateutil.parser import parse
+# a specialized type of dictionary that makes it easier to
+# combine dictionaries after each round of operation
 from collections import Counter
 
 hw0_deadline = parse("2015-09-02 08:05:00")
@@ -35,6 +37,22 @@ def give_credit(filename, deadline, per_task):
                     hw_scores[row[0]] += per_task
 
     return hw_scores
+
+def update_gradefile(scores_dict):
+    with open("gradebook-before.csv", 'rb') as csvfile:
+        with open('gradebook-after.csv', 'wb') as csvfile2:
+            gradereader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            gradewriter = csv.writer(csvfile2, delimiter=',', quotechar='|')
+            for row in gradereader:
+                if row[0] == "Student ID":
+                    row.append("New Peer Feedback (HW Extra Credit) [0.01]")
+                    gradewriter.writerow(row)
+                else:
+                    this_student = row[0] + "@gatech.edu"
+                    if scores_dict.has_key(this_student):
+                        row.append(scores_dict[this_student])
+                    gradewriter.writerow(row)
+
 
 def report_data(scores_dict):
     total_students = len(scores_dict.keys())
@@ -71,6 +89,8 @@ def main():
     
     print "\nAll Combined: "
     report_data(student_scores)
+
+    update_gradefile(student_scores)
 
 
 if __name__ == "__main__":
