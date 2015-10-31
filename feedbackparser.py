@@ -6,6 +6,8 @@ import csv
 from dateutil.parser import parse
 # a specialized type of dictionary that makes it easier to
 # combine dictionaries after each round of operation
+# commented out because I decided to use a different tool so I could see
+# where 0's happened more easily
 # from collections import Counter
 
 hw0_deadline = parse("2015-09-02 08:00:00")
@@ -57,6 +59,9 @@ def give_credit(filename, deadline, tasks):
 
     return completed
 
+# method call that actually generates an updated csv gradefile for
+# potential upload into T-Square
+
 def update_gradefile(scores_dict):
     with open("gradebook-before.csv", 'rb') as csvfile:
         with open('gradebook-rulechange.csv', 'wb') as csvfile2:
@@ -69,6 +74,9 @@ def update_gradefile(scores_dict):
                 else:
                     this_student = row[0] + "@gatech.edu"
                     if scores_dict.has_key(this_student):
+                        # the next line sets the last existing item in the
+                        # csv to the new score, while the line after adds
+                        # a new additional item to the end of the list
                         #row[-1] = scores_dict[this_student]
                         row.append(scores_dict[this_student])
                     gradewriter.writerow(row)
